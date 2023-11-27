@@ -12,8 +12,10 @@ if __name__ == '__main__':
     base_model_name = "mistral"
     run_name = base_model_name + "-" + project
     output_dir = "./" + run_name
+    dataset_name = "alpaca_code"
+    dataset_dir = "./datasets/" + dataset_name
 
-    packed_dataset = load_from_disk(output_dir)
+    packed_dataset = load_from_disk(dataset_dir)
     train_dataset = packed_dataset['train']
     eval_dataset = packed_dataset['eval']
 
@@ -59,11 +61,11 @@ if __name__ == '__main__':
         eval_dataset=eval_dataset,
         args=TrainingArguments(
             output_dir=output_dir,
-            resume_from_checkpoint=f"{output_dir}/checkpoint-100",
+            resume_from_checkpoint=f"{output_dir}/checkpoint-1000",
             warmup_steps=5,
             per_device_train_batch_size=16,
             gradient_accumulation_steps=4,
-            max_steps=1000,
+            max_steps=2000,
             learning_rate=2.5e-5,
             bf16=True,
             optim="paged_adamw_8bit",
@@ -71,7 +73,7 @@ if __name__ == '__main__':
             logging_steps=10,
             save_steps=100,
             save_strategy="steps",
-            eval_steps=100,
+            eval_steps=200,
             evaluation_strategy="steps",
             do_eval=True,
             report_to=['tensorboard'],
